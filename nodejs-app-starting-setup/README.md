@@ -257,3 +257,53 @@ gibson@gibbs-yavar:~$ docker image inspect ed98432dc055
 ]
 gibson@gibbs-yavar:~$
 ```
+
+# Copying Files Into & From A Container
+
+First you need create following folder inside the project folder.
+
+```bash
+dummy/
+└── text.txt
+
+1 directory, 1 file
+
+```
+
+```bash
+$ docker cp <source_path> <container_name:destination_path>
+```
+
+```bash
+$ docker cp dummy/. <containerName>:test
+```
+
+```bash
+$ docker cp dummy/. dreamy_rosalind:/test
+Successfully copied 2.56kB to dreamy_rosalind:/test
+```
+
+And Delete the test from the dummy folder
+
+```bash
+$ docker cp dreamy_rosalind:/test dummy
+```
+
+```bash
+$ docker cp dreamy_rosalind:/test dummy
+Successfully copied 2.56kB to /home/gibson/Documents/gibson/learning/learn-docker/nodejs-app-starting-setup/dummy
+```
+
+Now the folder structure will be like
+
+```bash
+dummy/
+└── test
+    └── test.txt
+
+2 directories, 1 file
+```
+
+This commant would allow you to add something to a container without restarting the container and rebuiding the image.
+
+---
