@@ -405,6 +405,7 @@ $ docker volume prune
 ```
 
 To remove all volume including the anonymous and named volume
+
 ```bash
 $ docker volume prune -a
 ```
@@ -430,5 +431,19 @@ $ docker volume inspect feedback-files
 ]
 
 ```
+
+---
+
+# Adding more to the .dockerignore File
+
+You can add more **"to-be-ignored"** files and folders to your .dockerignore file.
+
+For example, consider adding the following to entries:
+
+`Dockerfile`
+`.git`
+This would ignore the `Dockerfile` itself as well as a potentially existing `.git` folder (if you are using Git in your project).
+
+In general, you want to add anything which isn't required by your application to execute correctly.
 
 ---

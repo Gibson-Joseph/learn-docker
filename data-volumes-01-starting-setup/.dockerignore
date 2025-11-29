@@ -1,0 +1,7 @@
+# We can sepcify which folders and files should not be copied by a COPY instruction.
+
+node_modules
+
+.git
+
+Dockerfile
