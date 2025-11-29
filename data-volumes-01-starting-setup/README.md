@@ -207,3 +207,228 @@ This ensures that docker will now not able to write into this `/app` or any of i
 ```bash
 $ docker run -d --rm -p 3000:3000 --name feedback-app -v feedback:/app/feedback -v /home/gibson/Documents/gibson/learning/learn-docker/data-volumes-01-starting-setup:/app:ro -v /app/temp -v /app/node_modules feedback-node:volumes
 ```
+
+---
+
+Here is a **clear, line-by-line explanation** of your Docker run command:
+
+---
+
+# ✅ **Your Command**
+
+```bash
+docker run -d --rm -p 3000:3000 --name feedback-app \
+  -v feedback:/app/feedback \
+  -v /home/gibson/Documents/gibson/learning/learn-docker/data-volumes-01-starting-setup:/app:ro \
+  -v /app/temp \
+  -v /app/node_modules \
+  feedback-node:volumes
+```
+
+---
+
+# 🔍 **Breakdown & Explanation**
+
+## **1️⃣ `docker run -d --rm`**
+
+- `-d` → run in **detached** (background) mode
+- `--rm` → remove container automatically when stopped
+
+✔ Keeps your system clean.
+
+---
+
+## **2️⃣ `-p 3000:3000`**
+
+Maps:
+
+```
+HOST: 3000 → CONTAINER: 3000
+```
+
+✔ Allows you to open the app in your browser at `http://localhost:3000`.
+
+---
+
+## **3️⃣ `--name feedback-app`**
+
+Gives your container a friendly name:
+
+```
+feedback-app
+```
+
+✔ Easier to stop/remove/log.
+
+---
+
+# 🧊 **Volumes (Most Important Part)**
+
+## **4️⃣ `-v feedback:/app/feedback`**
+
+A **named volume** called `feedback`.
+
+```
+Docker Volume: feedback  --->  /app/feedback (inside container)
+```
+
+✔ Keeps user feedback or app data
+✔ Persistent even if the container is removed
+✔ NOT stored in your project folder
+
+---
+
+## **5️⃣ `-v /home/.../data-volumes-01-starting-setup:/app:ro`**
+
+This is a **bind mount**.
+
+```
+Your Local Folder → Mounted to → /app (inside container)
+```
+
+`ro` → **read-only**
+
+✔ Container **CAN read** your source code
+✘ Container **CANNOT edit** or delete it
+✔ Protects your project files
+
+---
+
+## **6️⃣ `-v /app/temp`**
+
+This is an **anonymous volume**.
+
+Meaning:
+
+```
+Create a Docker-managed temp volume → mount it on /app/temp
+```
+
+✔ Container can write temporary files
+✔ They won’t appear in your project folder
+✔ You don’t need to manage them manually
+
+---
+
+## **7️⃣ `-v /app/node_modules`**
+
+Another **anonymous volume**, mounted on `/app/node_modules`.
+
+Purpose:
+
+✔ Prevents node_modules from being overwritten
+✔ Avoids the “node_modules created in my project folder” problem
+✔ Ensures all packages stay inside Docker
+
+This is the **correct pattern** for Node.js development.
+
+---
+
+## **8️⃣ `feedback-node:volumes`**
+
+This is the **image name** you are running.
+
+---
+
+# 🎯 **What This Setup Achieves**
+
+### ✔ Safe: your source code is mounted read-only
+
+### ✔ Clean: node_modules stored inside Docker, not on your host
+
+### ✔ Persistent: feedback data stored in named volume
+
+### ✔ Easy development: code changes reflect immediately inside container
+
+### ✔ No pollution: your project folder stays clean (no node_modules, no temp folders)
+
+---
+
+## Docker volumn list
+
+```bash
+$ docker volume ls
+```
+
+```bash
+$ docker volume ls
+DRIVER    VOLUME NAME
+local     6af8f13a92ac0aaf0cc93a26094221ae78967ac0059c1b5fe24c12188190d259 # Anonymous volume
+local     e8e07dd24a0c3b468b1898db71e5b7ac5034750d27dbec5a1d8b19553b7e94b9 # Anonymous volume
+local     feedback # Named volume
+```
+
+The bind mount does not show up in this list, because the bind mount is not a volume managed by Docker, this binds a local folder which we know to a folder inside of the container. And of course there fore docker does not manage this. it's our known folder on our host machine, docker is not in control over that. But the other volumnes are managed by Docker.
+
+And managed by Docker also means that docker will create this volume if it doesn't exist yet, when you run a container.
+
+## Create volume through comments
+
+```bash
+$ docker volume create <volume_name>
+```
+
+```bash
+$ docker volume create feedback-files
+feedback-files
+$ docker volume list
+DRIVER    VOLUME NAME
+local     6af8f13a92ac0aaf0cc93a26094221ae78967ac0059c1b5fe24c12188190d259
+local     e8e07dd24a0c3b468b1898db71e5b7ac5034750d27dbec5a1d8b19553b7e94b9
+local     feedback
+local     feedback-files
+```
+
+And we can use our new volume here
+
+```bash
+$ docker run -d --rm -p 3000:3000 --name feedback-app -v feedback-files:/app/feedback -v /home/gibson/Documents/gibson/learning/learn-docker/data-volumes-01-starting-setup:/app:ro -v /app/temp -v /app/node_modules feedback-node:volumes
+```
+
+## To remove a volume
+
+Using the following comment we can delete our unused volumes.
+
+```bash
+$ docker volume rm <volume_name>
+```
+
+```bash
+$ docker volume rm feedback
+feedback
+```
+
+To remove all anonymous volume
+
+```bash
+$ docker volume prune
+```
+
+To remove all volume including the anonymous and named volume
+```bash
+$ docker volume prune -a
+```
+
+## To inspect our volume
+
+```bash
+$ docker volume inspect <volume_name>
+```
+
+```bash
+$ docker volume inspect feedback-files
+[
+    {
+        "CreatedAt": "2025-11-29T16:44:01+05:30",
+        "Driver": "local",
+        "Labels": null,
+        "Mountpoint": "/var/snap/docker/common/var-lib-docker/volumes/feedback-files/_data",
+        "Name": "feedback-files",
+        "Options": null,
+        "Scope": "local"
+    }
+]
+
+```
+
+---
