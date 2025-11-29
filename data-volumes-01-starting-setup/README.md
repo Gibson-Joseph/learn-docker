@@ -21,7 +21,7 @@ Docker sets up a folder/path on your host machine, exact location is unknown to 
 
 # Anonymous volumes
 
-```docker
+```dockerfile
 VOLUME['/app/feedback'];
 ```
 
