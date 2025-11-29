@@ -13,4 +13,4 @@ EXPOSE 3000
 # that is the path inside our container which should be mapped to some folder outside of the container. Here we let docker control this folder
 # VOLUME [ "/app/feedback" ] 
 
-CMD [ "node", "server.js" ]
+CMD [ "npm", "start" ]
