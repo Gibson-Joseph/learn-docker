@@ -168,3 +168,42 @@ Just a quick note: If you don't always want to copy and use the full path, you c
 macOS / Linux: `-v $(pwd):/app`
 
 Windows: `-v "%cd%":/app`
+
+---
+
+# Read only volumes
+
+By default volumes are read and write, which means the container is able to read data from there and write data to them. But you can restrict that.
+
+A read-only volume is a Docker volume (or bind mount) that the container can read but cannot write to.
+This protects your local files or mounted data from accidental modification by the container.
+
+## Syntax
+
+### Bind Mount (Host → Container)
+
+```bash
+$ -v /path/on/host:/path/in/container:ro
+```
+
+## Named Volume
+
+```bash
+$ -v volume_name:/path/in/container:ro
+```
+
+## Anonymous Volume (read-only)
+
+```bash
+$ -v /path/in/container:ro
+```
+
+```bash
+$ docker run -d --rm -p 3000:3000 --name feedback-app -v feedback:/app/feedback -v /home/gibson/Documents/gibson/learning/learn-docker/data-volumes-01-starting-setup:/app:ro -v /app/node_modules feedback-node:volumes
+```
+
+This ensures that docker will now not able to write into this `/app` or any of its sub-folders. Of course, we on our hosting machine stil wil be able to change these files, this does not affect us. Its only affects the container and the application running in the container.
+
+```bash
+$ docker run -d --rm -p 3000:3000 --name feedback-app -v feedback:/app/feedback -v /home/gibson/Documents/gibson/learning/learn-docker/data-volumes-01-starting-setup:/app:ro -v /app/temp -v /app/node_modules feedback-node:volumes
+```
