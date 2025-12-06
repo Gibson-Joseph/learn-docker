@@ -62,3 +62,27 @@ v25.2.1
 ```
 
 ---
+
+# Building a First Utility container
+
+```dockerfile
+FROM node:14-alpine
+WORKDIR /app
+```
+
+create the image
+
+```sh
+$ docker build -t node-util .
+```
+
+Run the container
+
+```sh
+$ docker run -it -v /home/gibson/Documents/gibson/learning/learn-docker/utility-container:/app node-util npm init
+```
+
+Once we were we done, we can see the package.json file appear on our host machine.
+
+And now I could totaly uninstall node in my host machine.
+And I could still create project with help of npm init with help of this utility continer. And it can be really useful actually you don't have to install all extra tools like node on your machine.
