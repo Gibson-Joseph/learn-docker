@@ -5,13 +5,11 @@ services:
     image: mongo
     volumes:
       - data:/data/db
-
-    environment:
+      # environment:
       # - MONGO_INITDB_ROOT_USERNAME=gibbs
 
       # MONGODB_USERNAME: gibbs
       # MONGODB_PASSWORD: secret
-
     env_file:
       - ./env/mongo.env
     # Here the docker compose will create the network, if we want we can create the network too.
@@ -19,10 +17,37 @@ services:
     # networks:
     #   - goals-net
 
-    # backend:
+  backend:
+    build: ./backend
+    # build:
+    #   context: ./backend
+    #   dockerfile: Dockerfile # If we named it differenty we can build image like this
+    #   args:
+    #     - name=value
+    ports:
+      - '8000:8000'
+    volumes:
+      - logs:/app/logs
+      - ./backend:/app # In compose file we can use the relative path
+      - /app/node_modules
+    env_file:
+      - ./env/backend.env
+    depends_on:
+      - mongodb
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src
 
-    # frontend:
+    # For me its working with and without this
+    # stdin_open: true
+    # tty: true
 
+    depends_on:
+      - backend
     # Named volume should be specified here, and anonymous volumes and bind mounts don't need to specified here
 volumes:
   data:
+  logs:

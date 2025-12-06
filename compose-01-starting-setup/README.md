@@ -133,6 +133,10 @@ docker compose up -d
 docker compose down
 ```
 
+```sh
+docker compose down -v # it will remove the volume when its down
+```
+
 ### **Rebuild + start**
 
 ```sh
