@@ -1,0 +1,28 @@
+# version: '3.8'
+
+services:
+  mongodb:
+    image: mongo
+    volumes:
+      - data:/data/db
+
+    environment:
+      # - MONGO_INITDB_ROOT_USERNAME=gibbs
+
+      # MONGODB_USERNAME: gibbs
+      # MONGODB_PASSWORD: secret
+
+    env_file:
+      - ./env/mongo.env
+    # Here the docker compose will create the network, if we want we can create the network too.
+
+    # networks:
+    #   - goals-net
+
+    # backend:
+
+    # frontend:
+
+    # Named volume should be specified here, and anonymous volumes and bind mounts don't need to specified here
+volumes:
+  data:
