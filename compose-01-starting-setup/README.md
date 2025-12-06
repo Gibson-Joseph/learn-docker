@@ -127,6 +127,12 @@ docker compose up
 docker compose up -d
 ```
 
+### **Start the container with updated image(re-build)**
+
+```sh
+docker compose up --build
+```
+
 ### **Stop containers**
 
 ```sh
@@ -135,6 +141,12 @@ docker compose down
 
 ```sh
 docker compose down -v # it will remove the volume when its down
+```
+
+### To build our custom images only and not to start the container
+
+```sh
+docker compose build
 ```
 
 ### **Rebuild + start**

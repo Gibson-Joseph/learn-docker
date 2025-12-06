@@ -5,6 +5,9 @@ services:
     image: mongo
     volumes:
       - data:/data/db
+      # using this we can set our own container name if we want
+      # container_name: mongodb
+
       # environment:
       # - MONGO_INITDB_ROOT_USERNAME=gibbs
 
