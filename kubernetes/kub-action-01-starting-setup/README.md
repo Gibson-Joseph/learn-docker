@@ -132,3 +132,54 @@ minikube service first-app
 You use minikube **service because** Minikube does not have a real cloud load balancer, so it creates a local tunnel to expose your service.
 
 ---
+
+# Scaling in Action
+
+### Scale up the pods
+
+```sh
+kubectl scale deployment/<DEPLOYMENT_APP> --replicas=<NUMBER>
+```
+
+```sh
+kubectl scale deployment/first-app --replicas=3
+
+deployment.apps/first-app scaled
+```
+
+Now you can see the 3 pods
+
+```sh
+kubectl get pods
+
+NAME                         READY   STATUS    RESTARTS        AGE
+first-app-6f65c97f86-8wlbn   1/1     Running   0               27s
+first-app-6f65c97f86-nmkhr   1/1     Running   3 (8m19s ago)   87m
+first-app-6f65c97f86-ql7zl   1/1     Running   0               27s
+```
+
+### Scale down the pods
+
+```sh
+kubectl scale deployment/first-app --replicas=1
+
+deployment.apps/first-app scaled
+```
+
+```sh
+kubectl get pods
+
+NAME                         READY   STATUS        RESTARTS      AGE
+first-app-6f65c97f86-8wlbn   1/1     Terminating   4 (68s ago)   6m34s
+first-app-6f65c97f86-nmkhr   1/1     Running       7 (68s ago)   93m
+first-app-6f65c97f86-ql7zl   1/1     Terminating   4 (65s ago)   6m34s
+```
+
+Now you can see that our two pods are **terminating**
+
+```sh
+kubectl get pods
+
+NAME                         READY   STATUS    RESTARTS        AGE
+first-app-6f65c97f86-nmkhr   1/1     Running   7 (4m10s ago)   96m
+```
