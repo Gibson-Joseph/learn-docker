@@ -183,3 +183,29 @@ kubectl get pods
 NAME                         READY   STATUS    RESTARTS        AGE
 first-app-6f65c97f86-nmkhr   1/1     Running   7 (4m10s ago)   96m
 ```
+
+# Updating Deployments
+
+A Deployment manages Pods and allows you to update your application without downtime using rolling updates
+
+```sh
+kubectl set image deployment/<DEPLOYMENT_NAME> <CONTAINER_NAME>=<IMAGE_NAME>
+```
+
+```sh
+kubectl set image deployment/first-app kub-first-app=gibsonjoseph/kub-first-app:2
+
+deployment.apps/first-app image updated
+```
+
+### Check Rollout Status
+
+```sh
+kubectl rollout status deployment/<DEPLOYMENT_NAME>
+```
+
+```sh
+kubectl rollout status deployment/first-app
+
+deployment "first-app" successfully rolled out
+```
