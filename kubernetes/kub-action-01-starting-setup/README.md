@@ -209,3 +209,151 @@ kubectl rollout status deployment/first-app
 
 deployment "first-app" successfully rolled out
 ```
+
+# Deployment Rollbacks & History
+
+Here I have used the image that never exists
+
+```sh
+kubectl set image deployment/first-app kub-first-app=gibsonjoseph/kub-first-app:3 # NOTE: This image is not exists
+
+deployment.apps/first-app image updated
+```
+
+To check the status
+
+```sh
+kubectl rollout status deployment/first-app
+
+Waiting for deployment "first-app" rollout to finish: 1 old replicas are pending termination...
+```
+
+NOTE: **kubernetes cannot kill the old Pod yet because the new Pod is NOT healthy**
+
+```sh
+kubectl get pods
+
+NAME                         READY   STATUS             RESTARTS   AGE
+first-app-5fc5568b94-77rjt   1/1     Running            0          16m
+first-app-76f46bbcb7-vbpng   0/1     ImagePullBackOff   0          6m59s
+```
+
+## Rollback the problematic deployment
+
+This will undo the latest deployment
+
+```sh
+kubectl rollout undo deployment<DEPLOYMENT_NAME>
+
+```
+
+```sh
+kubectl rollout undo deployment/first-app
+deployment.apps/first-app rolled back
+```
+
+When we chack the pod again, we can notice the problematic pod is gone
+
+```sh
+kubectl get pods
+NAME                         READY   STATUS    RESTARTS   AGE
+first-app-5fc5568b94-77rjt   1/1     Running   0          19m
+```
+
+As well we are back to successful status
+
+```sh
+kubectl rollout status deployment/first-app
+
+deployment "first-app" successfully rolled out
+```
+
+## History
+
+To check our deployment history
+
+```sh
+kubectl rollout history deployment/<DEPLOYMENT_NAME>
+```
+
+```sh
+kubectl rollout history deployment/first-app
+
+deployment.apps/first-app
+REVISION  CHANGE-CAUSE
+1         <none>
+3         <none>
+4         <none>
+```
+
+Here we can see the different deployment that we can made. We can also have details about the deployment.
+
+```sh
+kubectl rollout history deployment/<DEPLOYMENT_NAME> --revision=<REVISION_IDENTIFIERS>
+```
+
+```sh
+kubectl rollout history deployment/first-app --revision=3
+
+deployment.apps/first-app with revision #3
+Pod Template:
+  Labels:       app=first-app
+        pod-template-hash=76f46bbcb7
+  Containers:
+   kub-first-app:
+    Image:      gibsonjoseph/kub-first-app:3
+    Port:       <none>
+    Host Port:  <none>
+    Environment:        <none>
+    Mounts:     <none>
+  Volumes:      <none>
+  Node-Selectors:       <none>
+  Tolerations:  <none>
+```
+
+Here we can see which image was used and couple of other things here.
+
+### To go back to previous deployment
+
+```sh
+kubectl rollout undo deployment/<DEPLOYMENT_NAME> --to-revision=<REVISION_IDENTIFIERS>
+```
+
+```sh
+kubectl rollout undo deployment/first-app --to-revision=1
+
+deployment.apps/first-app rolled back
+```
+
+```sh
+kubectl get pods
+
+NAME                         READY   STATUS        RESTARTS   AGE
+first-app-5fc5568b94-77rjt   1/1     Terminating   0          31m
+first-app-6f65c97f86-8stw6   1/1     Running       0          26s
+```
+
+### NOTE: Rollback is not working for me; need to check that again on sometime
+
+# To restart
+
+```sh
+kubectl rollout restart deployment/first-app
+
+deployment.apps/first-app restarted
+```
+
+# To delete the service
+
+```sh
+kubectl delete service first-app
+
+service "first-app" deleted from default namespace
+```
+
+# To delete the deployment
+
+```sh
+kubectl delete deployment first-app
+
+```
