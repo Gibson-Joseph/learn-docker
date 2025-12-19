@@ -1,0 +1,10 @@
+# DECLARATIVE APPROACH
+
+# Here the file name is totally up to us.
+
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+
+apiVersion: app/v1
+kind: Deployment
+metadata:
+  name: second-app-deployment
