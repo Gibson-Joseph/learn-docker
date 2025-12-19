@@ -22,7 +22,9 @@ In **Kubernetes**, the `apiVersion` field is a required key in every object's co
 
 ---
 
-# To run the kubernetes yaml file:
+# To creating a deployment declaratively
+
+`deployment.yaml`
 
 ```yaml
 apiVersion: apps/v1
@@ -69,4 +71,54 @@ second-app-deployment   1/1     1            1           108s
 kubectl get pod
 NAME                                     READY   STATUS    RESTARTS   AGE
 second-app-deployment-65db7746bd-fj8fw   1/1     Running   0          114s
+```
+
+# To creating a service declaratively
+
+`service.yaml`
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: second-app
+  ports:
+    - protocol: 'TCP'
+      port: 8000
+      targetPort: 8080
+  type: LoadBalancer
+  # type: ClusterIP
+  # type: NodePort
+```
+
+```sh
+kubectl apply -f service.yaml
+service/backend created
+```
+
+```sh
+kubectl get service
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+backend      LoadBalancer   10.106.46.219   <pending>     8000:32510/TCP   108s
+kubernetes   ClusterIP      10.96.0.1       <none>        443/TCP          105m
+```
+
+To check this; run the following command
+
+```sh
+minikube service <SERVICE_NAME>
+```
+
+```sh
+minikube service backend
+┌───────────┬─────────┬─────────────┬───────────────────────────┐
+│ NAMESPACE │  NAME   │ TARGET PORT │            URL            │
+├───────────┼─────────┼─────────────┼───────────────────────────┤
+│ default   │ backend │ 8000        │ http://192.168.49.2:32510 │
+└───────────┴─────────┴─────────────┴───────────────────────────┘
+🎉  Opening service default/backend in default browser...
+
 ```

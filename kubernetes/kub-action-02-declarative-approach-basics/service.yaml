@@ -1,15 +1,15 @@
 apiVersion: v1
-kind: Service
+kind: Service # Tells Kubernetes: “I want to create a Service object”
 metadata:
-  name: backend
-spec:
-  selector: 
-    app: second-app
+  name: backend # Name of the Service
+spec: # Service configuration
+  selector:
+    app: second-app # It tells the Service: “Send traffic to Pods with label app=second-app”
   ports:
-    - protocol: 'TCP'
-      port: 80
-      targetPort: 8080
-    # - protocol: 'TCP'
-    #   port: 443
-    #   targetPort: 443
+    - protocol: "TCP"
+      # Normal web traffic uses TCP (HTTP, HTTPS)
+      port: 8000 # Clients connect to the Service using port 8000
+      targetPort: 8080 # The container port
   type: LoadBalancer
+  # type: ClusterIP
+  # type: NodePort
