@@ -4,7 +4,25 @@
 
 # https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
 
-apiVersion: app/v1
-kind: Deployment
-metadata:
-  name: second-app-deployment
+apiVersion: apps/v1
+kind: Deployment # Specifies what type of object this is.
+metadata: # Metadata is information about the object
+  name: second-app-deployment # name is the unique name of this Deployment inside the namespace.
+spec: # Everything inside tells Kubernetes how you want the app to run
+  replicas: 1 # Number of Pod copies you want running
+  selector: # This tells the Deployment: “I manage Pods that have these labels”
+    matchLabels:
+      app: second-app
+      tier: backend
+  template: # Kubernetes uses this template to create Pods
+    metadata:
+      labels: # These labels match the selector above, so the Deployment knows: “Yes, this Pod belongs to me.”
+        app: second-app
+        tier: backend
+    spec: # This describes the Pod itself
+      containers:
+        # A Pod can have one or more containers. Here, it has one container
+        - name: second-node
+          image: gibsonjoseph/kub-first-app:2
+        # - name: ...
+        #   image:
