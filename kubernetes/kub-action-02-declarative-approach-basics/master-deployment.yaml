@@ -1,0 +1,46 @@
+# Multiple Config
+
+apiVersion: v1
+kind: Service # Tells Kubernetes: “I want to create a Service object”
+metadata:
+  name: backend # Name of the Service
+spec: # Service configuration
+  selector:
+    app: second-app # It tells the Service: “Send traffic to Pods with label app=second-app”
+  ports:
+    - protocol: "TCP"
+      # Normal web traffic uses TCP (HTTP, HTTPS)
+      port: 8000 # Clients connect to the Service using port 8000
+      targetPort: 8080 # The container port
+  type: LoadBalancer
+  # type: ClusterIP
+  # type: NodePort
+---
+# --- # To add multiple configuration, the only thing you need as a separator. And it must be three dashes. because this is a YAML specific syntax which basically means a brand new object starts thereafter.
+
+# If you combine servie and deployment in one of the same file, it is a god practice to put the service object first so that this resource is created first. Since it has the selector, it will then dynamically add any pods which are created thereafter.
+
+# When a service is created, it's not created any analyzed once, but it continuously monitors all the pods which are created and removed in your application and if a new pod is created which matches the serivce selector lable, it will be added to this serivce.
+
+apiVersion: apps/v1
+kind: Deployment # Specifies what type of object this is.
+metadata: # Metadata is information about the object
+  name: second-app-deployment # name is the unique name of this Deployment inside the namespace.
+spec: # Everything inside tells Kubernetes how you want the app to run
+  replicas: 1 # Number of Pod copies you want running
+  selector: # This tells the Deployment: “I manage Pods that have these labels”
+    matchLabels:
+      app: second-app
+      tier: backend
+  template: # Kubernetes uses this template to create Pods
+    metadata:
+      labels: # These labels match the selector above, so the Deployment knows: “Yes, this Pod belongs to me.”
+        app: second-app
+        tier: backend
+    spec: # This describes the Pod itself
+      containers:
+        # A Pod can have one or more containers. Here, it has one container
+        - name: second-node
+          image: gibsonjoseph/kub-first-app:2
+        # - name: ...
+        #   image:
