@@ -27,3 +27,12 @@ spec:
       containers:
         - name: second-node
           image: gibsonjoseph/kub-first-app
+          livenessProbe:
+            # A liveness probe tells Kubernetes how to check if your container is still “alive”.
+            httpGet:
+              path: /
+              port: 8080
+            periodSeconds: 10 # Kubernetes checks the container every 10 seconds
+            initialDelaySeconds: 5
+            # Kubernetes waits 5 seconds after the container starts
+            # Then it runs the first liveness check
