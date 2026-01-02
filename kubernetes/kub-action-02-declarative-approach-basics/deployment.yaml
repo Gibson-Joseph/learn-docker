@@ -23,6 +23,6 @@ spec: # Everything inside tells Kubernetes how you want the app to run
       containers:
         # A Pod can have one or more containers. Here, it has one container
         - name: second-node
-          image: gibsonjoseph/kub-first-app:2
+          image: gibsonjoseph/kub-first-app
         # - name: ...
         #   image:

@@ -122,3 +122,20 @@ minikube service backend
 🎉  Opening service default/backend in default browser...
 
 ```
+
+# Alternative Way to Delete the Resources
+```sh
+kubectl delete -f=<DEPLOYMENT_FILE_NAME>
+```
+
+```sh
+kubectl delete -f=deployment.yaml
+```
+
+If you want to delete mulitple resouces
+```sh
+kubectl delete -f=<DEPLOYMENT_FILE_NAME.yaml>,<SERVICE_FILE_NAME.yaml>
+(Or)
+kubectl delete -f=<DEPLOYMENT_FILE_NAME.yaml> -f=<SERVICE_FILE_NAME.yaml>
+(Or)
+```
