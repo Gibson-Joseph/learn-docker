@@ -1,0 +1,29 @@
+# https://www.udemy.com/course/docker-kubernetes-the-practical-guide/learn/lecture/22627673#overview
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: second-app-deployment
+  labels:
+    group: example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: second-app
+      tier: backend
+
+    # matchExpressions:
+    #   # https://riyafa.wordpress.com/2020/06/07/kubernetes-matchexpressions-explained/
+    #   - { key: app, operator: In, values: [second-app, first-app] }
+    #   # Available matchExpressions Operators: In, NotIn
+
+  template:
+    metadata:
+      labels:
+        app: second-app
+        tier: backend
+    spec:
+      containers:
+        - name: second-node
+          image: gibsonjoseph/kub-first-app

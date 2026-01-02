@@ -124,6 +124,7 @@ minikube service backend
 ```
 
 # Alternative Way to Delete the Resources
+
 ```sh
 kubectl delete -f=<DEPLOYMENT_FILE_NAME>
 ```
@@ -132,10 +133,20 @@ kubectl delete -f=<DEPLOYMENT_FILE_NAME>
 kubectl delete -f=deployment.yaml
 ```
 
-If you want to delete mulitple resouces
+If you want to **delete mulitple resouces**
+
 ```sh
 kubectl delete -f=<DEPLOYMENT_FILE_NAME.yaml>,<SERVICE_FILE_NAME.yaml>
 (Or)
 kubectl delete -f=<DEPLOYMENT_FILE_NAME.yaml> -f=<SERVICE_FILE_NAME.yaml>
+```
+
+---
+
+If you want to **create mulitple resouces**
+
+```sh
+kubectl apply -f=<DEPLOYMENT_FILE_NAME.yaml>,<SERVICE_FILE_NAME.yaml>
 (Or)
+kubectl apply -f=<DEPLOYMENT_FILE_NAME.yaml> -f=<SERVICE_FILE_NAME.yaml>
 ```
