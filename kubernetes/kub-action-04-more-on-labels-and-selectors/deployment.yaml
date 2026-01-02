@@ -26,7 +26,8 @@ spec:
     spec:
       containers:
         - name: second-node
-          image: gibsonjoseph/kub-first-app
+          image: gibsonjoseph/kub-first-app:2
+          imagePullPolicy: Always
           livenessProbe:
             # A liveness probe tells Kubernetes how to check if your container is still “alive”.
             httpGet:
