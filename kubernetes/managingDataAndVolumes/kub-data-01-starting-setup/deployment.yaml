@@ -2,16 +2,30 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: story-deployment
-spec:
-  replicas: 1
+spec: # “How should Kubernetes run this?”
+  replicas: 1 # Number of Pods
   selector:
-    matchLabels:
+    matchLabels: # Deployment says: “I manage Pods that have label app=story”. This must match Pod labels exactly.
       app: story
   template:
     metadata:
       labels:
         app: story
-    spec:
+    spec: # Describes what runs inside the Pod.
       containers:
         - name: story
-          image: gibsonjoseph/kub-data-demo
+          image: gibsonjoseph/kub-data-demo:1
+          volumeMounts: # Tells the container where to mount volumes.
+            - mountPath: /app/story
+              name: story-volume # Name of the volume to mount. Must match a volume defined below.
+      volumes: # Defines volumes available to the Pod. These are Pod-level, not container-level
+        # https://kubernetes.io/docs/concepts/storage/volumes/#emptydir
+        - name: story-volume # Referenced by volumeMounts
+          # Type of volume: emptyDir
+          emptyDir: {} # This means that yoiu don't have any specific configuration for it, but that you just want to use this type as it is with all its default settings which typically suffice.
+
+# Beginner golden rules
+# selector.matchLabels === template.metadata.labels
+# volumeMounts.name === volumes.name
+# emptyDir = temporary storage
+# Volumes live as long as the Pod, not the container
