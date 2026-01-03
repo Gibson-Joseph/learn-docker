@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: story-deployment
 spec: # “How should Kubernetes run this?”
-  replicas: 1 # Number of Pods
+  replicas: 2 # Two Pods are create
   selector:
     matchLabels: # Deployment says: “I manage Pods that have label app=story”. This must match Pod labels exactly.
       app: story
@@ -19,13 +19,11 @@ spec: # “How should Kubernetes run this?”
             - mountPath: /app/story
               name: story-volume # Name of the volume to mount. Must match a volume defined below.
       volumes: # Defines volumes available to the Pod. These are Pod-level, not container-level
-        # https://kubernetes.io/docs/concepts/storage/volumes/#emptydir
+        # https://kubernetes.io/docs/concepts/storage/volumes/#hostpath
         - name: story-volume # Referenced by volumeMounts
-          # Type of volume: emptyDir
-          emptyDir: {} # This means that yoiu don't have any specific configuration for it, but that you just want to use this type as it is with all its default settings which typically suffice. This creates a new empty directory per  port.
+          # Type of volume: hostpath
+          hostPath:
+            # This allows us to set a path on the host machine, so on the node, the real machine running this pod, and then the data from that path will be exposed to the different pods. So multiple pods can now share one in the same path on the host machine instead of pod-specfic paths. And the hostPath is a bit like a bind mount.
 
-# Beginner golden rules
-# selector.matchLabels === template.metadata.labels
-# volumeMounts.name === volumes.name
-# emptyDir = temporary storage
-# Volumes live as long as the Pod, not the container
+            path: /data # Kubernetes checks if `/data` exists on the node
+            type: DirectoryOrCreate # If it does not exist → it is **created automatically**
