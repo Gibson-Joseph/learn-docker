@@ -186,7 +186,11 @@ kubectl delete pod <pod-name>
 - File still exists ✅
 
 3. Check node filesystem:
+SSH into the Kubernetes node
 
+```sh
+minikube ssh
+```
 ```sh
 ls /data
 ```
