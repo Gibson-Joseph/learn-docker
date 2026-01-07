@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: story-deployment
+spec: # “How should Kubernetes run this?”
+  replicas: 2 # Two Pods are create
+  selector:
+    matchLabels: # Deployment says: “I manage Pods that have label app=story”. This must match Pod labels exactly.
+      app: story
+  template:
+    metadata:
+      labels:
+        app: story
+    spec: # Describes what runs inside the Pod.
+      containers:
+        - name: story
+          image: gibsonjoseph/kub-data-demo:1
+          volumeMounts: # Tells the container where to mount volumes.
+            - mountPath: /app/story
+              name: story-volume # Name of the volume to mount. Must match a volume defined below.
+      volumes: # Defines volumes available to the Pod. These are Pod-level, not container-level
+        # https://kubernetes.io/docs/concepts/storage/volumes/#hostpath
+        - name: story-volume # Referenced by volumeMounts
+          persistentVolumeClaim:
+            claimName: host-pvc # Now the data should be fully independent from our pods.
+

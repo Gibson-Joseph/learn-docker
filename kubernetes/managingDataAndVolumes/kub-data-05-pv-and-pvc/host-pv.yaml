@@ -12,6 +12,7 @@ spec: # Our specification for this Persistant Volume.
   volumeMode: Filesystem
   # There are two available modes here. There is Filesystem and Block. And these are different stroage type. Not only defined by kubernetes, but generally. When we talk about stroage and development, we have Block stroage and we have Filesystem stroage.
   #Diff between Filesystem and Block: https://www.computerweekly.com/feature/Storage-pros-and-cons-Block-vs-file-vs-object-storage
+  storageClassName: standard # default in minikube kubernetes. Need to understand the stroageClassName.
   accessModes:
     # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
     - ReadWriteOnce # This means that this volume can be mounted as read-write volume by a single node. So by multiple pods, but they all have to be on the same node.
@@ -22,3 +23,4 @@ spec: # Our specification for this Persistant Volume.
     type: DirectoryOrCreate
 # ---
 # And still, it only needs to be defined once (and possibly by someone else)! Because it's independent from a specific Pod. In order to use this PersistantVolume they need to use a Persistant Volume Claim.
+

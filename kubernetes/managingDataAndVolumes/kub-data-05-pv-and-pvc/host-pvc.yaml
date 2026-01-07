@@ -1,0 +1,17 @@
+# HostPath PersistentVolume Claim
+apiVersion: v1
+kind: PersistentVolumeClaim # To make Kubernetes aware of which kind of resource we are creating here.
+metadata:
+  name: host-pvc # This name will later be important for using in in a pod.
+spec: # The configuration for this resource
+  volumeName: host-pv # use the name here for the Persistant Volume (host-pv)
+  # Kubernetes, again offers you a lot of flexibility. You can't just claim by name, there are other ways of claiming by resource. That would be called "Dynamic Volume Provisioning" and is an advanced administration topic. We stick to "Static Provisioning".
+  accessModes:
+    - ReadWriteOnce # If you want, you would use this claim on different pods and some pods only need READ access, other need READ-WRIE access. You could specify multiple access modes here for Claim as well.
+  storageClassName: standard # default in minikube kubernetes. Need to understand the stroageClassName.
+  resources:
+    requests:
+      storage: 1Gi # We actually request 1Gi(Gigabyte) of storage here, but we could also request less for this claim. If we had multiple claims to the same Persistent Volume, we might wanna request less, so that in total we don't request more than we got available. This could leads to error.
+
+# This is still doesn't establish a connection to a pod though. Instead does this now a Claim which can now be used by pods to make that claim to that Persistant Volume. So we need to go back to the deployment yaml file and now connect our pod there to this claim, So that ultimately it reaches out to this Persistant Volume(host-pv) and gets its volume.
+
