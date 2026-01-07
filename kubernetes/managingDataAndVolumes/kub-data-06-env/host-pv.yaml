@@ -1,14 +1,26 @@
+# HostPath PersistentVolume
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: host-pv
-spec:
-  capacity: 
+spec: # Our specification for this Persistant Volume.
+  # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#capacity
+  capacity:
+    # The Capacity matters becuase as an administrator we might want to control how much capacity can be used by the different pods which are later executed in our cluster. And therefore we can set a capacity here.
+    # A capacity for this persistent volume and the pods, when they clain this volume later, can then define how much capacity they need.
     storage: 1Gi
   volumeMode: Filesystem
-  storageClassName: standard
+  # There are two available modes here. There is Filesystem and Block. And these are different stroage type. Not only defined by kubernetes, but generally. When we talk about stroage and development, we have Block stroage and we have Filesystem stroage.
+  #Diff between Filesystem and Block: https://www.computerweekly.com/feature/Storage-pros-and-cons-Block-vs-file-vs-object-storage
+  storageClassName: standard # default in minikube kubernetes. Need to understand the stroageClassName.
   accessModes:
-    - ReadWriteOnce
+    # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+    - ReadWriteOnce # This means that this volume can be mounted as read-write volume by a single node. So by multiple pods, but they all have to be on the same node.
+    # - ReadOnlyMany # This means that it's ready-only, but it can be claimed by multiple nodes. So multiple nodes on different nodes can claim this same persistant volume.
+    # - ReadWriteMany # the volume can be mounted as read-write by many nodes.
   hostPath:
     path: /data
     type: DirectoryOrCreate
+# ---
+# And still, it only needs to be defined once (and possibly by someone else)! Because it's independent from a specific Pod. In order to use this PersistantVolume they need to use a Persistant Volume Claim.
+
