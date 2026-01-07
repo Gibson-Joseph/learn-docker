@@ -1,0 +1,10 @@
+
+services:
+  stories:
+    build: .
+    volumes:
+      - stories:/app/story
+    ports:
+      - 8000:3000
+volumes:
+  stories: 
