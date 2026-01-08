@@ -15,10 +15,13 @@ spec: # “How should Kubernetes run this?”
       containers:
         - name: story
           image: gibsonjoseph/kub-data-demo:2
-          # To setup the env for container specification level
+          # To setup the env
           env:
             - name: STORY_FOLDER
-              value: "story"
+              valueFrom:
+                configMapKeyRef:
+                  name: data-store-env
+                  key: folder
           volumeMounts: # Tells the container where to mount volumes.
             - mountPath: /app/story
               name: story-volume # Name of the volume to mount. Must match a volume defined below.
