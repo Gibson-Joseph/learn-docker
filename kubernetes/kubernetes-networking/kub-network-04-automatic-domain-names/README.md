@@ -1,96 +1,126 @@
-# [Pod-to-Pod Communication with IP Addresses & Environment Variable.](https://www.udemy.com/course/docker-kubernetes-the-practical-guide/learn/lecture/22627933#overview)
+# **Using DNS for Pod-to-Pod Communication in Kubernetes**
 
-With service, you get stable IP addresses. And one service has it's own IP address, and that IP address will not change, and through that IP address, the pod that are controlled by that service can be reached.
+---
 
-So that means we need to find out which IP address this service has. Now one way of doing that is;
+## 📌 What is DNS in Kubernetes?
 
-```sh
-$ kubectl apply -f auth-service.yaml -f auth-deployment.yaml
-service/auth-service created
-deployment.apps/auth-deployment created
+Kubernetes provides a **built-in DNS system (CoreDNS)** that allows Pods to discover and communicate with each other **using names instead of IP addresses**.
+
+Instead of doing this ❌:
+
+```bash
+http://10.244.1.12:3000
 ```
 
-```sh
-$ kubectl get services
-NAME            TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
-auth-service    ClusterIP      10.101.18.151   <none>        80/TCP           42s
-kubernetes      ClusterIP      10.96.0.1       <none>        443/TCP          21d
-users-service   LoadBalancer   10.110.4.213    <pending>     8080:30583/TCP   64m
+You do this ✅:
+
+```bash
+http://users-service
 ```
 
-Now you can see the Cluster IP address, which is now available inside of the cluster. So you will not be able to use that IP address on you local machine. It's only available inside of the cluster. And we could use this IP address there as a value.
+DNS automatically resolves the name to the correct IP.
 
-But of course manually getting this IP address, is a bit annoying. The good news is that it's stable, it won't change all the time, so we could do that. But still it is a bit annoying.
+---
 
-There is a more convenient way. Kubernetes will give you automatically generated environment variables. In your programs, with information about all the services, which are running in your cluster. So we got `auth-service` and `user-service` up and running basically, and we automatially get environment variables. In our code, by kubernetes, if we got these services. And through tese eviroment variables, Kubernetes will automatically give us information like the IP addresses of the different services.
+## 🧠 Why DNS Is the Best Way for Pod Communication
 
-# Service Environment Variables (Recommended Way)
+Pods are **ephemeral**:
 
-When you create a Service, Kubernetes automatically injects environment variables for it.
+- They restart
+- They scale
+- Their IPs change
 
-`Example Service`
+DNS solves this by:
+
+- Providing **stable names**
+- Automatically updating when Pods change
+- Load-balancing traffic
+
+👉 This is why **DNS is the default & recommended method** in Kubernetes.
+
+🔹 Core Concept
+
+👉 Pods never talk to Pods directly in production.
+👉 Pods talk to Services using DNS names.
+
+```sh
+Pod → Service DNS → Service IP → Backend Pods
+```
+
+---
+
+## 🔹 How Kubernetes DNS Works (High Level)
+
+1. A Pod makes a request using a service name
+2. The request goes to **CoreDNS**
+3. CoreDNS resolves the service name to a **ClusterIP**
+4. `kube-proxy` forwards traffic to one of the backend Pods
+
+---
+
+## 🔹 CoreDNS (Important Component)
+
+CoreDNS runs as Pods in:
+
+```bash
+$ kubectl get namespace
+NAME                   STATUS   AGE
+kube-system            Active   21d
+... and so on
+```
+
+Check it:
+
+```bash
+kubectl get pods -n kube-system | grep coredns
+(Or)
+kubectl get pods -n kube-system
+
+NAME                               READY   STATUS    RESTARTS         AGE
+coredns-66bc5c9577-jk7nq           1/1     Running   6 (3h30m ago)    21d
+coredns-66bc5c9577-r78j6           1/1     Running   6 (3h30m ago)    21d
+
+```
+
+If CoreDNS is down → **service discovery breaks**.
+
+---
+
+## 🔹 Basic Service DNS Name
+
+For a Service:
 
 ```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: users-service
-spec:
-selector:
-  app: users
-ports:
-  - port: 80
-    targetPort: 3000
-```
-
-Auto-created environment variables
-
-**Inside other Pods:**
-
-```sh
-USERS_SERVICE_SERVICE_HOST=10.96.120.45
-USERS_SERVICE_SERVICE_PORT=80
-```
-
-**Usage:**
-
-```sh
-curl http://$USERS_SERVICE_SERVICE_HOST:$USERS_SERVICE_SERVICE_PORT
-```
-
-✅ Stable
-✅ No IP change
-✅ Kubernetes-managed
-
-# Naming Convention (Very Important)
-
-If your Service name is:
-
-```sh
 metadata:
   name: users-service
 ```
 
-Kubernetes converts it to:
+### DNS name inside the same namespace:
 
 ```sh
-USERS_SERVICE
+users-service
 ```
 
-Then creates environment variables like:
+That’s it. No IPs. No ports (default port used).
+
+---
+
+## 🔹 Full DNS Format (Fully Qualified Domain Name – FQDN)
 
 ```sh
-USERS_SERVICE_SERVICE_HOST
-USERS_SERVICE_SERVICE_PORT
+<service-name>.<namespace>.svc.cluster.local
 ```
 
-# How Applications Use These Variables
-
-Node.js example
+Example:
 
 ```sh
-const host = process.env.USERS_SERVICE_SERVICE_HOST;
-const port = process.env.USERS_SERVICE_SERVICE_PORT;
-
-fetch(`http://${host}:${port}/health`);
+users-service.default.svc.cluster.local
 ```
+
+### When to use FQDN?
+
+- Cross-namespace communication
+- Explicit resolution
+- Debugging
+
+---

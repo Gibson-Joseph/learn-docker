@@ -17,8 +17,19 @@ spec:
           image: gibsonjoseph/kub-demo-users:latest
           env:
             - name: AUTH_ADDRESS
-              value: "10.101.18.151" # Cluster IP for auth-service
-# With service, you get stable IP addresses. And one service has it's own IP address, and that IP address will not change, and through that IP address, the pod that are controlled by that service can be reached.
-# To get the IP address
+              # value: "10.101.18.151"
+              # Using DNS for Pod-to-Pod Communication.
+              # <service-name>.<namespace>
+              value: "auth-service.default" # here you can simply use `auth-service` name as a domin to send your request to.
 
-# $ kubectl get service
+# To check the namespace:
+
+# $ kubectl get namespace
+# NAME                   STATUS   AGE
+# default                Active   21d
+# kube-node-lease        Active   21d
+# kube-public            Active   21d
+# kube-system            Active   21d
+# kubernetes-dashboard   Active   21d
+
+# Here on minikube, we got a couple of namespaces and it's the `default` namespaces to which our services and deployments are assigned, If we don't tell kubernetes to do it in another way.
