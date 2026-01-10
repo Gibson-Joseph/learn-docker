@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+        - name: users
+          image: gibsonjoseph/kub-demo-users:latest
+          env:
+            - name: AUTH_ADDRESS
+              # value: "10.101.18.151"
+              # Using DNS for Pod-to-Pod Communication.
+              # <service-name>.<namespace>
+              value: "auth-service.default" # here you can simply use `auth-service` name as a domin to send your request to.
+
+# To check the namespace:
+
+# $ kubectl get namespace
+# NAME                   STATUS   AGE
+# default                Active   21d
+# kube-node-lease        Active   21d
+# kube-public            Active   21d
+# kube-system            Active   21d
+# kubernetes-dashboard   Active   21d
+
+# Here on minikube, we got a couple of namespaces and it's the `default` namespaces to which our services and deployments are assigned, If we don't tell kubernetes to do it in another way.
