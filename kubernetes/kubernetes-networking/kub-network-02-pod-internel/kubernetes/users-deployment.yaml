@@ -17,6 +17,8 @@ spec:
           image: gibsonjoseph/kub-demo-users:latest
           env:
             - name: AUTH_ADDRESS
-              value: localhost # We use `localhost` in the kubernetes world which should work since that is the special address that can be used inside of one and the same pod, if two container running in the same pod wanna communicate with each other.
-        - name: auth
-          image: gibsonjoseph/kub-demo-auth:latest
+              value: "10.101.18.151" # Cluster IP for auth-service
+# With service, you get stable IP addresses. And one service has it's own IP address, and that IP address will not change, and through that IP address, the pod that are controlled by that service can be reached.
+# To get the IP address
+
+# $ kubectl get service

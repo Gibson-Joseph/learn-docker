@@ -56,8 +56,15 @@ app.post('/login', async (req, res) => {
 
   // normally, we'd find a user by email and grab his/ her ID and hashed password
   const hashedPassword = password + '_hash';
+  // const response = await axios.get(
+  //   `http://${process.env.AUTH_ADDRESS}/token/` +
+  //     hashedPassword +
+  //     '/' +
+  //     password
+  // );
+  //  AUTH_SERVICE_SERVICE_HOST env is automatically generated and managed by kubernetes and this will hold the IP address which was automatically assigned for this service (auth-service)
   const response = await axios.get(
-    `http://${process.env.AUTH_ADDRESS}/token/` +
+    `http://${process.env.AUTH_SERVICE_SERVICE_HOST}/token/` +
       hashedPassword +
       '/' +
       password
