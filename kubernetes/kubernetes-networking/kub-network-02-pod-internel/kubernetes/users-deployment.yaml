@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+        - name: users
+          image: gibsonjoseph/kub-demo-users:latest
+          env:
+            - name: AUTH_ADDRESS
+              value: localhost # We use `localhost` in the kubernetes world which should work since that is the special address that can be used inside of one and the same pod, if two container running in the same pod wanna communicate with each other.
+        - name: auth
+          image: gibsonjoseph/kub-demo-auth:latest
