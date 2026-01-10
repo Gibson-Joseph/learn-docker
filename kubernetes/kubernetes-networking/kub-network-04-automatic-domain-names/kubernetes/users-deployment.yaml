@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+        - name: users
+          image: gibsonjoseph/kub-demo-users:latest
+          env:
+            - name: AUTH_ADDRESS
+              value: "10.101.18.151" # Cluster IP for auth-service
+# With service, you get stable IP addresses. And one service has it's own IP address, and that IP address will not change, and through that IP address, the pod that are controlled by that service can be reached.
+# To get the IP address
+
+# $ kubectl get service
